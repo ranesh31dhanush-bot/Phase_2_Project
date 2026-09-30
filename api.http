@@ -1,0 +1,55 @@
+### user creation api
+POST http://localhost:3000/auth/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "passwaord123"
+}
+
+
+### user login api
+POST http://localhost:3000/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "newPassword123!"
+}
+
+
+### 2. Refresh Access Token (Cookie is automatically sent)
+POST http://localhost:3000/auth/refresh HTTP/1.1
+Content-Type: application/json
+
+
+### 3. Logout (Cookie is automatically sent)
+POST http://localhost:3000/auth/logout HTTP/1.1
+
+
+### 4. Get Users (Requires Authentication)
+GET http://localhost:3000/user/profile HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWJjYTI1YTk0NDQ3OWMwODc0ZjFjYmEiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJpYXQiOjE3OTA3NDczNDAsImV4cCI6MTc5MDc0ODI0MH0.v7Z-VLKM50yRh-hkF7RfXDjELhMITsoIeWWWOS_9ukY
+
+
+### 5. token verification 
+### Verify Email (GET)
+GET http://localhost:3000/auth/verify/4af755f6ff95dc84f646457c40b30277b125bcad865c227a2b26dac4dbe8fe248454a9f3de00d0f3c662136dc91f0349b96a396236dd5720ec90676bddd9e817 HTTP/1.1
+
+
+### 6. Request Password Reset
+POST http://localhost:3000/auth/forgot-password HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "test@example.com"
+}
+
+### 7 reset-password
+POST http://localhost:3000/auth/reset-password HTTP/1.1
+Content-Type: application/json
+
+{
+  "token": "6a90952e8b66c60d0fb335e0439594035590beb0898b124bbae5cf6b662dd779",
+  "newPassword" : "newPassword123!"
+}

@@ -1,0 +1,99 @@
+services:
+  # ---------------------------------------------------
+  # 1. MongoDB Service (Persistent Named Volume + Healthcheck)
+  # ---------------------------------------------------
+  mongodb:
+    image: mongo:7
+    container_name: auth_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - auth_network
+
+  # ---------------------------------------------------
+  # 2. Redis Service (Queues + Session Storage)
+  # ---------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: auth_redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"  # Bound to 6380 on host to prevent collision with ecc-redis
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - auth_network
+
+  # ---------------------------------------------------
+  # 3. API Service (Express Backend)
+  # ---------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auth_api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - APP_URL=http://localhost:3000
+      - MONGO_URI=mongodb://mongodb:27017/auth_db
+    env_file:
+      - .env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - auth_network
+
+  # ---------------------------------------------------
+  # 4. Worker Service (BullMQ Background Email Processor)
+  # ---------------------------------------------------
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auth_worker
+    restart: unless-stopped
+    command: ["node", "workers/email.worker.js"]
+    environment:
+      - NODE_ENV=development
+      - REDIS_URL=redis://redis:6379
+      - MONGO_URI=mongodb://mongodb:27017/auth_db
+    env_file:
+      - .env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - auth_network
+
+# Persistent volumes preserved across container restarts & rebuilds
+volumes:
+  mongo_data:
+  redis_data:
+
+networks:
+  auth_network:
+    driver: bridge
