@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
 # Set working directory
 WORKDIR /usr/src/app
@@ -6,7 +6,8 @@ WORKDIR /usr/src/app
 # Install dependencies first (layer caching)
 COPY package*.json ./
 # RUN npm ci --only=production
-RUN npm ci
+# RUN npm ci
+RUN npm install
 
 # Copy application source code
 COPY . .

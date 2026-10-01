@@ -1,0 +1,55 @@
+### Product API
+### Get All Products (Default: page=1, limit=10)
+GET http://localhost:3000/products HTTP/1.1
+
+### Get Products with Category Filter
+GET http://localhost:3000/products?category=electronics HTTP/1.1
+
+### Get Products with Search Filter
+GET http://localhost:3000/products?search=phone HTTP/1.1
+
+### Get Products with Both Category and Search
+GET http://localhost:3000/products?category=electronics&search=keyboard HTTP/1.1
+
+### Get Products with Pagination (Page 2, Limit 5)
+GET http://localhost:3000/products?page=2&limit=5 HTTP/1.1
+
+
+#### Get Product by ID
+GET http://localhost:3000/products/3 HTTP/1.1
+
+
+### 1. Create Product as Admin (Success: 201)
+POST http://localhost:3000/admin/products HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWJlMzNkYjhkYWUwMzM1YjlmMWVlYWYiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc5MDg1MTQxMywiZXhwIjoxNzkwODUyMzEzfQ.n5JKOMjay4xbFUJTxqtvVm5kS_AQj72254DKTu4WufA
+Content-Type: application/json
+
+{
+  "name": "Gaming Monitor 27-inch",
+  "price": 2499900,
+  "stock": 15,
+  "category": "electronics"
+}
+
+### 2. Test Without Token (Expect: 401)
+POST http://localhost:3000/admin/products HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Gaming Monitor 27-inch",
+  "price": 2499900,
+  "stock": 15,
+  "category": "electronics"
+}
+
+### 3. Test With Normal User Token (Expect: 403 Forbidden)
+POST http://localhost:3000/admin/products HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWJjYTI1YTk0NDQ3OWMwODc0ZjFjYmEiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc5MDg1MTUyOCwiZXhwIjoxNzkwODUyNDI4fQ.dIzvo_mpcLMHSZ2sOtembz2lAMvOk5OZzMQfSe-nkHU
+Content-Type: application/json
+
+{
+  "name": "Gaming Monitor 27-inch",
+  "price": 2499900,
+  "stock": 15,
+  "category": "electronics"
+}

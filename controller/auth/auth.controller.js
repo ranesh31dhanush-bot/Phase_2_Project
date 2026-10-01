@@ -97,7 +97,7 @@ module.exports.login = async (req, res) => {
     }
 
     const accessToken = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user._id, email: user.email, role: user.role },
       process.env.JWT_ACCESS_SECRET,
       {
         expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN || '15m',
@@ -122,6 +122,7 @@ module.exports.login = async (req, res) => {
       user: {
         id: user._id,
         email: user.email,
+        role: user.role,
         createdAt: user.createdAt
       },
     });
@@ -445,7 +446,7 @@ module.exports.googleCallback = async (req, res) => {
 
     // 5. Issue Standard Tokens (Same as local login)
     const accessToken = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user._id, email: user.email, role: user.role },
       process.env.JWT_ACCESS_SECRET,
       { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN || '15m', algorithm: 'HS256' }
     );

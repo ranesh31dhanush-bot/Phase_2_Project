@@ -1,6 +1,8 @@
+version: '3.8'
+
 services:
   # ---------------------------------------------------
-  # 1. MongoDB Service (Persistent Named Volume + Healthcheck)
+  # 1. MongoDB Service (Auth / Users)
   # ---------------------------------------------------
   mongodb:
     image: mongo:7
@@ -20,14 +22,37 @@ services:
       - auth_network
 
   # ---------------------------------------------------
-  # 2. Redis Service (Queues + Session Storage)
+  # 2. PostgreSQL Service (Products, Orders, Order Items)
+  # ---------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: ecommerce_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: ecommerce_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ecommerce_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - auth_network
+
+  # ---------------------------------------------------
+  # 3. Redis Service (Queues, Cart, Sessions & Product Cache)
   # ---------------------------------------------------
   redis:
     image: redis:7-alpine
     container_name: auth_redis
     restart: unless-stopped
     ports:
-      - "6380:6379"  # Bound to 6380 on host to prevent collision with ecc-redis
+      - "6380:6379"  # Port 6380 on Windows host, internal 6379 inside Docker
     volumes:
       - redis_data:/data
     healthcheck:
@@ -39,7 +64,7 @@ services:
       - auth_network
 
   # ---------------------------------------------------
-  # 3. API Service (Express Backend)
+  # 4. API Service (Express Backend)
   # ---------------------------------------------------
   api:
     build:
@@ -52,13 +77,20 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3000
-      - REDIS_URL=redis://redis:6379
       - APP_URL=http://localhost:3000
       - MONGO_URI=mongodb://mongodb:27017/auth_db
+      - REDIS_URL=redis://redis:6379
+      - PG_HOST=postgres
+      - PG_PORT=5432
+      - PG_USER=postgres
+      - PG_PASSWORD=postgrespassword
+      - PG_DATABASE=ecommerce_db
     env_file:
       - .env
     depends_on:
       mongodb:
+        condition: service_healthy
+      postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -66,7 +98,7 @@ services:
       - auth_network
 
   # ---------------------------------------------------
-  # 4. Worker Service (BullMQ Background Email Processor)
+  # 5. Worker Service (BullMQ Background Email Processor)
   # ---------------------------------------------------
   worker:
     build:
@@ -93,6 +125,7 @@ services:
 volumes:
   mongo_data:
   redis_data:
+  pgdata:
 
 networks:
   auth_network:

@@ -4,6 +4,8 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/auth/auth.routes');
 const userRoutes = require('./routes/users/user.routes');
+const productRoutes = require('./routes/products/product.route');
+const adminRoutes = require('./routes/admin/admin.route');
 
 const app = express();
 
@@ -21,13 +23,15 @@ app.use(cookieParser());
 // Route Mounts
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
+app.use('/products', productRoutes);
+app.use('/admin', adminRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello World! Welcome to the Express server.');
 });
 
 // 404 Handler
-app.use((req, res) => {
+app.use((req, res, next) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
