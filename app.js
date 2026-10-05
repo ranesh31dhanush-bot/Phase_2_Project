@@ -6,6 +6,7 @@ const authRoutes = require('./routes/auth/auth.routes');
 const userRoutes = require('./routes/users/user.routes');
 const productRoutes = require('./routes/products/product.route');
 const adminRoutes = require('./routes/admin/admin.route');
+const cartRoutes = require('./routes/cart/cart.route');
 
 const app = express();
 
@@ -25,7 +26,9 @@ app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/products', productRoutes);
 app.use('/admin', adminRoutes);
+app.use('/cart', cartRoutes);
 
+// Root Route
 app.get('/', (req, res) => {
   res.send('Hello World! Welcome to the Express server.');
 });

@@ -1,0 +1,20 @@
+### 1 Add to Cart
+POST http://localhost:3000/cart/add HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWJjYTI1YTk0NDQ3OWMwODc0ZjFjYmEiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc5MTE4MTY1NywiZXhwIjoxNzkxMTgyNTU3fQ.s3bIkVvRytD59ml2nnAGflXosl7nZUbSVxTNHG7Fqf4
+Content-Type: application/json
+
+{
+  "productId": "3",
+  "quantity": 1
+}
+
+### 2 Get Cart Items
+GET http://localhost:3000/cart HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWJjYTI1YTk0NDQ3OWMwODc0ZjFjYmEiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc5MTE4MTY1NywiZXhwIjoxNzkxMTgyNTU3fQ.s3bIkVvRytD59ml2nnAGflXosl7nZUbSVxTNHG7Fqf4
+### 3 Remove Item from Cart
+DELETE http://localhost:3000/cart/3 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWJjYTI1YTk0NDQ3OWMwODc0ZjFjYmEiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc5MTE4MTY1NywiZXhwIjoxNzkxMTgyNTU3fQ.s3bIkVvRytD59ml2nnAGflXosl7nZUbSVxTNHG7Fqf4
+
+### 4 get total price of cart items
+GET http://localhost:3000/cart/total HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWJjYTI1YTk0NDQ3OWMwODc0ZjFjYmEiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc5MTE4MTY1NywiZXhwIjoxNzkxMTgyNTU3fQ.s3bIkVvRytD59ml2nnAGflXosl7nZUbSVxTNHG7Fqf4
