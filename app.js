@@ -7,6 +7,7 @@ const userRoutes = require('./routes/users/user.routes');
 const productRoutes = require('./routes/products/product.route');
 const adminRoutes = require('./routes/admin/admin.route');
 const cartRoutes = require('./routes/cart/cart.route');
+const orderRoutes = require('./routes/orders/order.route');
 
 const app = express();
 
@@ -27,7 +28,7 @@ app.use('/user', userRoutes);
 app.use('/products', productRoutes);
 app.use('/admin', adminRoutes);
 app.use('/cart', cartRoutes);
-
+app.use('/orders', orderRoutes);
 // Root Route
 app.get('/', (req, res) => {
   res.send('Hello World! Welcome to the Express server.');

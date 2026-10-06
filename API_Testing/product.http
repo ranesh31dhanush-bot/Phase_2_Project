@@ -12,7 +12,7 @@ GET http://localhost:3000/products?search=phone HTTP/1.1
 GET http://localhost:3000/products?category=electronics&search=keyboard HTTP/1.1
 
 ### Get Products with Pagination (Page 2, Limit 5)
-GET http://localhost:3000/products?page=2&limit=5 HTTP/1.1
+GET http://localhost:3000/products?page=1&limit=10 HTTP/1.1
 
 
 #### Get Product by ID
@@ -21,13 +21,13 @@ GET http://localhost:3000/products/3 HTTP/1.1
 
 ### 1. Create Product as Admin (Success: 201)
 POST http://localhost:3000/admin/products HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWJlMzNkYjhkYWUwMzM1YjlmMWVlYWYiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc5MDg1MTQxMywiZXhwIjoxNzkwODUyMzEzfQ.n5JKOMjay4xbFUJTxqtvVm5kS_AQj72254DKTu4WufA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWJlMzNkYjhkYWUwMzM1YjlmMWVlYWYiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc5MTIwMTU4NiwiZXhwIjoxNzkxMjAyNDg2fQ.W8sRSPen01RzgfIi96Jd8xtEH3bE0b9EpW67U5b3xtQ
 Content-Type: application/json
 
 {
-  "name": "Gaming Monitor 27-inch",
-  "price": 2499900,
-  "stock": 15,
+  "name": "Mechanical Keyboard Pro",
+  "price": 450000,
+  "stock": 20,
   "category": "electronics"
 }
 

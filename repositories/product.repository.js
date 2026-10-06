@@ -77,6 +77,29 @@ class ProductRepository {
     const result = await query(sql, [name.trim(), price, stock, category.toLowerCase().trim()]);
     return result.rows[0];
   }
+
+  async findAndLockProductsByIds(productIds, client = null) {
+    const executor = client || { query };
+    const sql = `
+      SELECT id, name, price, stock 
+      FROM products 
+      WHERE id = ANY($1::int[]) 
+      FOR UPDATE
+    `;
+    const result = await executor.query(sql, [productIds]);
+    return result.rows;
+  }
+
+  async decrementStock(productId, quantity, client = null) {
+    const executor = client || { query };
+    const sql = `
+      UPDATE products 
+      SET stock = stock - $1, updated_at = NOW() 
+      WHERE id = $2
+    `;
+    await executor.query(sql, [quantity, productId]);
+  }
+
 }
 
 module.exports = new ProductRepository();

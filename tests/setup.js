@@ -1,8 +1,7 @@
 // tests/setup.js
 process.env.NODE_ENV = 'test';
-process.env.REDIS_URL = 'redis://127.0.0.1:6380';
-process.env.JWT_ACCESS_SECRET = 'test_access_secret_12345';
-process.env.JWT_REFRESH_SECRET = 'test_refresh_secret_12345';
+process.env.JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'test_access_secret_12345';
+process.env.JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'test_refresh_secret_12345';
 process.env.REFRESH_TOKEN_EXPIRES_IN = '604800';
 process.env.ACCESS_TOKEN_EXPIRES_IN = '15m';
 
@@ -21,6 +20,9 @@ jest.mock('../queues/email.queue', () => {
     ),
     addPasswordResetEmailJob: jest.fn().mockImplementation((to, link) =>
       add('sendPasswordResetEmail', { to, type: 'passwordReset', link })
+    ),
+    addOrderConfirmationEmailJob: jest.fn().mockImplementation((to, orderId, totalAmount, items) =>
+      add('sendOrderConfirmationEmail', { to, orderId, totalAmount, items })
     ),
   };
 });
@@ -42,16 +44,24 @@ jest.mock('../config/oauth', () => ({
 
 const redisClient = require('../config/redis');
 
-const TEST_MONGO_URI = 'mongodb://127.0.0.1:27017/auth_test_db';
+// Resolve Docker container hostname or fallback to localhost
+const mongoHost = process.env.MONGO_HOST || (process.env.NODE_ENV === 'test' && process.env.DOCKER_ENV ? 'mongodb' : '127.0.0.1');
+const TEST_MONGO_URI = process.env.MONGO_URI || `mongodb://${process.env.MONGO_HOST || 'auth_mongo'}:27017/auth_test_db`;
 
 beforeAll(async () => {
-  // Connect to local MongoDB with runtimeAdapters to avoid Jest VM dynamic import failure
-  await mongoose.connect(TEST_MONGO_URI, {
-    serverSelectionTimeoutMS: 5000,
-    runtimeAdapters: { os: require('os') },
-  });
+  try {
+    await mongoose.connect(TEST_MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+      runtimeAdapters: { os: require('os') },
+    });
+  } catch (err) {
+    // Fallback if container name is 'mongodb' instead of 'auth_mongo'
+    await mongoose.connect('mongodb://mongodb:27017/auth_test_db', {
+      serverSelectionTimeoutMS: 5000,
+      runtimeAdapters: { os: require('os') },
+    });
+  }
 
-  // Connect Redis if lazyConnect was used
   if (redisClient.status === 'wait') {
     await redisClient.connect();
   }

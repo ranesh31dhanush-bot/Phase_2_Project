@@ -1,0 +1,12 @@
+### 1. Order Creation (Success: 201)
+POST http://localhost:3000/orders HTTP/1.1 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWJjYTI1YTk0NDQ3OWMwODc0ZjFjYmEiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc5MTE5ODczMSwiZXhwIjoxNzkxMTk5NjMxfQ.0mBAjk-tegH0mrbXROzDrf1PdbWZyqHo433Q8Bp56pk
+
+
+### 2. Get User Orders (Success: 200)
+GET http://localhost:3000/orders HTTP/1.1 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWJjYTI1YTk0NDQ3OWMwODc0ZjFjYmEiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc5MTE5ODczMSwiZXhwIjoxNzkxMTk5NjMxfQ.0mBAjk-tegH0mrbXROzDrf1PdbWZyqHo433Q8Bp56pk
+
+### 3. Get Order by ID (Success: 200)
+GET http://localhost:3000/orders/6 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWJjYTI1YTk0NDQ3OWMwODc0ZjFjYmEiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc5MTE5ODczMSwiZXhwIjoxNzkxMTk5NjMxfQ.0mBAjk-tegH0mrbXROzDrf1PdbWZyqHo433Q8Bp56pk

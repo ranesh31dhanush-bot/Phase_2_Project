@@ -32,9 +32,19 @@ const addPasswordResetEmailJob = async (to, link) => {
     });
 };
 
+const addOrderConfirmationEmailJob = async (to, orderId, totalAmount, items = []) => {
+  return emailQueue.add('sendOrderConfirmationEmail', {
+    to,
+    orderId,
+    totalAmount,
+    items,
+  });
+};
+
 
 module.exports = {
     emailQueue,
     addVerificationEmailJob,
     addPasswordResetEmailJob,
+    addOrderConfirmationEmailJob,
 };

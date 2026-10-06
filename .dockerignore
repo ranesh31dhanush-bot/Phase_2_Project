@@ -3,6 +3,6 @@ npm-debug.log
 .git
 .gitignore
 .env
-tests
 coverage
 *md
+.kilo
