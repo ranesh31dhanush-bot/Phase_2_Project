@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Real-Time Notifications Test</title>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    #notifications { list-style: none; padding: 0; }
+    li { background: #eef2ff; border-left: 4px solid #4f46e5; margin: 8px 0; padding: 10px; border-radius: 4px; }
+    .status { font-weight: bold; margin-bottom: 12px; }
+    button { padding: 8px 14px; margin-bottom: 12px; cursor: pointer; border-radius: 4px; border: 1px solid #4f46e5; background: #4f46e5; color: white; }
+  </style>
+</head>
+<body>
+  <h2>Real-Time Notifications Test</h2>
+  <div class="status">Socket Status: <span id="status" style="color: orange;">Connecting...</span></div>
+  
+  <!-- Permission Button for Native Windows / Chrome Popups -->
+  <button id="notifyBtn" onclick="requestNotificationPermission()">Enable Desktop Popups</button>
+
+  <h3>Received Notifications:</h3>
+  <ul id="notifications"></ul>
+
+  <script>
+    // 1. Request Native Browser Permission
+    function requestNotificationPermission() {
+      if (!("Notification" in window)) {
+        alert("This browser does not support desktop notifications.");
+        return;
+      }
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          document.getElementById('notifyBtn').textContent = "Popups Enabled ✓";
+          document.getElementById('notifyBtn').disabled = true;
+        }
+      });
+    }
+
+    // Auto-prompt on page load if not decided
+    if (Notification.permission === "granted") {
+      document.getElementById('notifyBtn').textContent = "Popups Enabled ✓";
+      document.getElementById('notifyBtn').disabled = true;
+    }
+
+    const ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWM0YzY3N2M4NDUwNWIzYjU5MWU1MmEiLCJlbWFpbCI6InRlc3QzQGV4YW1wbGUuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3OTEyODY5NTAsImV4cCI6MTc5MTI4Nzg1MH0.dglNr2CfX8GHWEB5qfYfyIgBScktSmd_zTa_591pkt4"; // your valid token
+
+    const socket = io('http://localhost:3000', {
+      auth: { token: ACCESS_TOKEN },
+      transports: ['websocket', 'polling']
+    });
+
+    const statusEl = document.getElementById('status');
+    const listEl = document.getElementById('notifications');
+
+    socket.on('connect', () => {
+      statusEl.textContent = `Connected (Socket ID: ${socket.id})`;
+      statusEl.style.color = 'green';
+    });
+
+    socket.on('connect_error', (err) => {
+      statusEl.textContent = `Connection Failed: ${err.message}`;
+      statusEl.style.color = 'red';
+    });
+
+    // 2. Receive Real-Time Event & Trigger Browser Notification Pop-up
+    socket.on('notification:new', (data) => {
+      // 1. Add to webpage list
+      const li = document.createElement('li');
+      li.innerHTML = `<strong>${data.title}</strong>: ${data.body} <br><small>Type: ${data.type} | ID: #${data.id}</small>`;
+      listEl.prepend(li);
+
+      // 2. Trigger native OS / Chrome desktop notification banner
+      if (Notification.permission === "granted") {
+        new Notification(data.title, {
+          body: data.body,
+          icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827392.png'
+        });
+      }
+    });
+  </script>
+</body>
+</html>

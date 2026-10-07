@@ -22,7 +22,7 @@ services:
       - auth_network
 
   # ---------------------------------------------------
-  # 2. PostgreSQL Service (Products, Orders, Order Items)
+  # 2. PostgreSQL Service (Products, Orders, Order Items, Notifications)
   # ---------------------------------------------------
   postgres:
     image: postgres:16-alpine
@@ -45,7 +45,7 @@ services:
       - auth_network
 
   # ---------------------------------------------------
-  # 3. Redis Service (Queues, Cart, Sessions & Product Cache)
+  # 3. Redis Service (Queues, Cart, Sessions, Socket.io Pub/Sub Adapter)
   # ---------------------------------------------------
   redis:
     image: redis:7-alpine
@@ -64,7 +64,7 @@ services:
       - auth_network
 
   # ---------------------------------------------------
-  # 4. API Service (Express Backend)
+  # 4. API Service - Instance 1 (Port 3000)
   # ---------------------------------------------------
   api:
     build:
@@ -98,7 +98,41 @@ services:
       - auth_network
 
   # ---------------------------------------------------
-  # 5. Worker Service (BullMQ Background Email Processor)
+  # 5. API Service - Instance 2 (Port 3001) for Multi-Instance Cross-Talk
+  # ---------------------------------------------------
+  api_2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auth_api_2
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - APP_URL=http://localhost:3001
+      - MONGO_URI=mongodb://mongodb:27017/auth_db
+      - REDIS_URL=redis://redis:6379
+      - PG_HOST=postgres
+      - PG_PORT=5432
+      - PG_USER=postgres
+      - PG_PASSWORD=postgrespassword
+      - PG_DATABASE=ecommerce_db
+    env_file:
+      - .env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - auth_network
+
+  # ---------------------------------------------------
+  # 6. Worker Service (BullMQ Background Email Processor)
   # ---------------------------------------------------
   worker:
     build:

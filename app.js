@@ -8,6 +8,9 @@ const productRoutes = require('./routes/products/product.route');
 const adminRoutes = require('./routes/admin/admin.route');
 const cartRoutes = require('./routes/cart/cart.route');
 const orderRoutes = require('./routes/orders/order.route');
+const notificationRoutes = require('./routes/notifications/notification.route');
+const path = require('path');
+
 
 const app = express();
 
@@ -29,6 +32,11 @@ app.use('/products', productRoutes);
 app.use('/admin', adminRoutes);
 app.use('/cart', cartRoutes);
 app.use('/orders', orderRoutes);
+app.use('/notifications', notificationRoutes);
+
+app.get('/test', (req, res) => {
+  res.sendFile(path.join(__dirname, 'test-client.html'));
+});
 // Root Route
 app.get('/', (req, res) => {
   res.send('Hello World! Welcome to the Express server.');

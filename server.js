@@ -1,7 +1,8 @@
-// server.js
 require('dotenv').config();
+const http = require('http');
 const mongoose = require('mongoose');
 const app = require('./app');
+const { initSocket } = require('./socket/socket');
 
 const normalizeMongoUri = (uri) => {
   if (!uri) return 'mongodb://127.0.0.1:27017/Phase_2_project';
@@ -11,17 +12,25 @@ const normalizeMongoUri = (uri) => {
 };
 
 const port = process.env.PORT || 3000;
-const MONGO_URI = normalizeMongoUri(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/Phase_2_project');
+const server = http.createServer(app);
 
-mongoose
-  .connect(MONGO_URI)
-  .then(() => {
+const startServer = async () => {
+  try {
+    const MONGO_URI = normalizeMongoUri(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/Phase_2_project');
+    await mongoose.connect(MONGO_URI);
     console.log('Connected to MongoDB');
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+
+    // Initialize Socket.io with Redis Adapter
+    const io = await initSocket(server);
+    app.set('io', io);
+
+    server.listen(port, () => {
+      console.log(`Server listening on port ${port}`);
     });
-  })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err);
+  } catch (err) {
+    console.error('Failed to start server:', err);
     process.exit(1);
-  });
+  }
+};
+
+startServer();

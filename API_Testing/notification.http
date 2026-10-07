@@ -1,0 +1,39 @@
+### Test Internal Notification Creation
+POST http://localhost:3000/notifications/internal HTTP/1.1
+Content-Type: application/json
+x-internal-secret: 269a800898ae31432abdd845059415518d4bbeea5197ff3916b122b884ef8cab
+
+{
+  "user_id": "6ac4c677c84505b3b591e52a",
+  "type": "order",
+  "title": "Cross-Instance Order",
+  "body": "Dispatched via Instance 2 (Port 3001) -> Received on Instance 1 (Port 3000)!"
+}
+
+### Test Unauthorized (Missing or Invalid Secret)
+POST http://localhost:3000/notifications/internal HTTP/1.1
+Content-Type: application/json
+x-internal-secret: invalid_secret
+
+{
+  "user_id": "6ac37dfe98d6e679075fbfe8",
+  "type": "order",
+  "title": "Order Placed",
+  "body": "Should fail with 401"
+}
+
+### 1. Fetch Paginated Notifications + Unread Count
+GET http://localhost:3000/notifications?page=1&limit=10 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWM0YzY3N2M4NDUwNWIzYjU5MWU1MmEiLCJlbWFpbCI6InRlc3QzQGV4YW1wbGUuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3OTEyODczOTQsImV4cCI6MTc5MTI4ODI5NH0.0CSaMN2Y-MVHZKZbi7nL5wH98_Nws3hf3MfLLTMM8eo
+
+### 2. Mark Single Notification as Read (replace 13 with your notification id)
+PATCH http://localhost:3000/notifications/13/read HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWM0YzY3N2M4NDUwNWIzYjU5MWU1MmEiLCJlbWFpbCI6InRlc3QzQGV4YW1wbGUuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3OTEyODczOTQsImV4cCI6MTc5MTI4ODI5NH0.0CSaMN2Y-MVHZKZbi7nL5wH98_Nws3hf3MfLLTMM8eo
+
+### 3. Mark All Notifications Read
+PATCH http://localhost:3000/notifications/read-all HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWM0YzY3N2M4NDUwNWIzYjU5MWU1MmEiLCJlbWFpbCI6InRlc3QzQGV4YW1wbGUuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3OTEyODczOTQsImV4cCI6MTc5MTI4ODI5NH0.0CSaMN2Y-MVHZKZbi7nL5wH98_Nws3hf3MfLLTMM8eo
+
+### 4. Verify Unread Count is Now 0
+GET http://localhost:3000/notifications HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWM0YzY3N2M4NDUwNWIzYjU5MWU1MmEiLCJlbWFpbCI6InRlc3QzQGV4YW1wbGUuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3OTEyODczOTQsImV4cCI6MTc5MTI4ODI5NH0.0CSaMN2Y-MVHZKZbi7nL5wH98_Nws3hf3MfLLTMM8eo

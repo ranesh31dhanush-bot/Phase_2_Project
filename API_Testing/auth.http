@@ -3,7 +3,7 @@ POST http://localhost:3000/auth/register HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "test1@example.com",
+  "email": "test3@example.com",
   "password": "passwaord123"
 }
 
@@ -13,8 +13,8 @@ POST http://localhost:3000/auth/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "test@example.com",
-  "password": "newPassword123!"
+  "email": "test3@example.com",
+  "password": "passwaord123"
 }
 
 ### Admin Login API
@@ -42,7 +42,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YWJjY
 
 ### 5. token verification 
 ### Verify Email (GET)
-GET http://localhost:3000/auth/verify/89a231c7afc2c2f7b46c17baad78c047f526a990785b44246615fc27b0412da47161cf919e94d11533725f346d6affd226658dac710f6d5265883a25a3fcfc50 HTTP/1.1
+GET http://localhost:3000/auth/verify/2a6a4e6fb5b3c5b372beffcbf19d3220f79c55a204f2512e48b26ce160f0ad2c9d3709dc107e50b78b54985fa4f61b56b48c16f30cb7a364018a2f2ac0642851 HTTP/1.1
 
 ### 6. Request Password Reset
 POST http://localhost:3000/auth/forgot-password HTTP/1.1

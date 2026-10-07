@@ -269,7 +269,10 @@ module.exports.verifyEmail = async (req, res) => {
     await user.save();
 
     const appUrl = process.env.APP_URL || 'http://localhost:3000';
-    return res.redirect(302, `${appUrl}/login?verified=true`);
+    // return res.redirect(302, `${appUrl}/login?verified=true`);
+    return res.status(200).json({
+      message: 'Email verified successfully. You can now log in.'
+    });
   } catch (error) {
     console.error('Error verifying email:', error);
     return res.status(500).json({ error: 'Internal server error' });
